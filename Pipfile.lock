@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "7e7ef69da7248742e869378f8421880cf8f0017f96d94d086813baa518a65489"
+            "sha256": "73a045e8c2f1adfc28a9a97fb2ea64f355125f8b0b9cd86ebe3804f6fc13fc93"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -15,6 +15,18 @@
             }
         ]
     },
-    "default": {},
+    "default": {
+        "home-hub-lambda-com-laszlobogacsi": {
+            "editable": true,
+            "path": "."
+        },
+        "paho-mqtt": {
+            "hashes": [
+                "sha256:e440a052b46d222e184be3be38676378722072fcd4dfd2c8f509fb861a7b0b79"
+            ],
+            "index": "pypi",
+            "version": "==1.4.0"
+        }
+    },
     "develop": {}
 }

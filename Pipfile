@@ -6,6 +6,8 @@ verify_ssl = true
 [dev-packages]
 
 [packages]
+paho-mqtt = "*"
+home-hub-lambda-com-laszlobogacsi = {editable = true,path = "."}
 
 [requires]
 python_version = "3.7"
