@@ -1,3 +1,4 @@
+import boto3 as boto3
 import paho.mqtt.client as mqtt
 
 devices = ('table lamp', 'standing lamp', 'fairy lights', 'cupboard lights')
@@ -20,7 +21,12 @@ def payload_builder(location, light_name, state):
 
 
 def lambda_handler(event, context):
-    client = MqttClient(username='ifzcvtng', password='Q_yr0x-aoMR5', host='m24.cloudmqtt.com', port=10109)
+    ssm = boto3.client('ssm')
+    password = ssm.get_parameter(Name='/homehub/cloudmqtt/password', WithDecryption=True)['Parameter']['Value']
+    username = ssm.get_parameter(Name='/homehub/cloudmqtt/username', WithDecryption=True)['Parameter']['Value']
+    host = ssm.get_parameter(Name='/homehub/cloudmqtt/host')['Parameter']['Value']
+    port = ssm.get_parameter(Name='/homehub/cloudmqtt/host/port')['Parameter']['Value']
+    client = MqttClient(username, password, host, port)
     slots = event["request"]["intent"]["slots"]
     location = slots["location"]["value"]
     light_name = slots["light_name"]["value"]
