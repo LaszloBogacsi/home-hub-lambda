@@ -2,10 +2,25 @@
 
 AWS lambda function to provide connection between Alexa and Cloud MQTT to message between a Raspberry Pi
 
+deploy to AWS Lambda using `python-lambda`  
+python-lambda takes care of installing and packaging the dependencies and deploy to AWS Lambda or S3.
 
-zip the virtual env site-packages folder
-add the function python code to the zip
+#### Deploy
+create `requirements.txt` 
+```
+pipenv run pip freeze > requirements.txt
+```
+```
+lambda deploy
+```
+windows: 
+```
+pipenv run python C:\Users\<USER>\.virtualenvs\<PROJECT_FOLDER>\Scripts\lambda deploy
+```  
+configuration in `config.yaml`
 
-deploy to AWS Lambda
-`aws lambda update-function-code --function-name lambda_alexa_mqtt --zip-file fileb://function.zip`
- 
+#### Test (*locally*)
+```
+lambda invoke
+``` 
+calls the lambda funciton with input from `event.json`

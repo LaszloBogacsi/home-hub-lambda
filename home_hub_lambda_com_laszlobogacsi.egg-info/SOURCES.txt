@@ -1,6 +1,0 @@
-README.md
-setup.py
-home_hub_lambda_com_laszlobogacsi.egg-info/PKG-INFO
-home_hub_lambda_com_laszlobogacsi.egg-info/SOURCES.txt
-home_hub_lambda_com_laszlobogacsi.egg-info/dependency_links.txt
-home_hub_lambda_com_laszlobogacsi.egg-info/top_level.txt

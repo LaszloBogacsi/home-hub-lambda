@@ -4,7 +4,7 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="home-hub-lambda-com-laszlobogacsi",
+    name="home-hub-lambda",
     version="0.0.1",
     author="Example Author",
     author_email="author@example.com",
