@@ -9,6 +9,7 @@ verify_ssl = true
 paho-mqtt = "*"
 home-hub-lambda-com-laszlobogacsi = {editable = true,path = "."}
 boto3 = "*"
+python-lambda = "*"
 
 [requires]
 python_version = "3.7"

@@ -25,7 +25,8 @@ def lambda_handler(event, context):
     password = ssm.get_parameter(Name='/homehub/cloudmqtt/password', WithDecryption=True)['Parameter']['Value']
     username = ssm.get_parameter(Name='/homehub/cloudmqtt/username', WithDecryption=True)['Parameter']['Value']
     host = ssm.get_parameter(Name='/homehub/cloudmqtt/host')['Parameter']['Value']
-    port = ssm.get_parameter(Name='/homehub/cloudmqtt/host/port')['Parameter']['Value']
+    port = int(ssm.get_parameter(Name='/homehub/cloudmqtt/host/port')['Parameter']['Value'])
+    print(password, username, host, port)
     client = MqttClient(username, password, host, port)
     slots = event["request"]["intent"]["slots"]
     location = slots["location"]["value"]
@@ -62,10 +63,10 @@ class MqttClient:
         client.on_publish = self.on_publish
         client.username_pw_set(username, password)
         try:
-            client.connect(host, port)
+            client.connect(host=host, port=port)
             client.loop_start()
-        except:
-            print("connection to mqtt client on " + host + " has failed")
+        except Exception as e:
+            print("connection to mqtt client on " + host + " has failed, reason: " + e)
 
     def on_connect(self, client, userdata, flags, rc):
         if rc == 0:
