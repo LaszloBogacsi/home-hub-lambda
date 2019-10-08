@@ -6,13 +6,24 @@ from mqtt.mqtt_client import MqttClient
 
 
 def handler(event, context):
+
+    # TODO: remove python lambda and add serverless to the project
+    # TODO: create Group intent
+    # TODO: create Single device intent
+    # TODO: Save group names to dynamo and read from there
+    # TODO: Save Single device names to dynamo and read from there
+    # TODO: Save Location names to dynamo and read from there
+    # TODO: Use the device return messages to update local postgres db to acknowledge state of devices. So that home-hub will reflect Alexa state.
+    # TODO: Better Alexa response message composed of location + status
+    # TODO: https://developer.amazon.com/docs/smapi/interaction-model-operations.html#update-interaction-model saving/updating a group name or light name would feed back to
+    #        alexas interaction model (teaching the model), https://developer.amazon.com/docs/smapi/interaction-model-schema.html
+
     client = get_mqtt_client(get_connection_params(boto3.client('ssm')))
     payload = payload_builder(extract_event_params(event), get_id_by)
     print(payload)
     client.publish(topic="remote/switch/relay", payload=payload)
     return {
         "version": "string",
-        "sessionAttributes": {"key": "value"},
         "response": {
             "outputSpeech": {
                 "type": "PlainText",
