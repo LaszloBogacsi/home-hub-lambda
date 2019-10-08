@@ -1,4 +1,4 @@
-# Home Hub Lambda
+# <img alt="logo" src=".home_hub_logo.svg" height="48" width="48"><img alt="logo" src=".amazon-lambda-logo.svg" height="48" width="48"> Home Hub Lambda
 
 AWS lambda function to provide connection between Alexa and Cloud MQTT to message between a Raspberry Pi
 
