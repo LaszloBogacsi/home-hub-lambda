@@ -7,7 +7,6 @@ from mqtt.mqtt_client import MqttClient
 
 def handler(event, context):
 
-    # TODO: remove python lambda and add serverless to the project
     # TODO: create Group intent
     # TODO: create Single device intent
     # TODO: Save group names to dynamo and read from there
