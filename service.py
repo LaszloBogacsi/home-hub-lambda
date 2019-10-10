@@ -2,13 +2,11 @@
 
 import boto3 as boto3
 
-from mqtt.mqtt_client import MqttClient
+# from mqtt.mqtt_client import MqttClient
 
 
 def handler(event, context):
 
-    # TODO: create Group intent
-    # TODO: create Single device intent
     # TODO: Save group names to dynamo and read from there
     # TODO: Save Single device names to dynamo and read from there
     # TODO: Save Location names to dynamo and read from there
@@ -17,10 +15,11 @@ def handler(event, context):
     # TODO: https://developer.amazon.com/docs/smapi/interaction-model-operations.html#update-interaction-model saving/updating a group name or light name would feed back to
     #        alexas interaction model (teaching the model), https://developer.amazon.com/docs/smapi/interaction-model-schema.html
 
-    client = get_mqtt_client(get_connection_params(boto3.client('ssm')))
-    payload = payload_builder(extract_event_params(event), get_id_by)
-    print(payload)
-    client.publish(topic="remote/switch/relay", payload=payload)
+    # client = get_mqtt_client(get_connection_params(boto3.client('ssm')))
+    print(extract_event_params(event))
+    # payload = payload_builder(extract_event_params(event), get_id_by)
+    # print(payload)
+    # client.publish(topic="remote/switch/relay", payload=payload)
     return {
         "version": "string",
         "response": {
@@ -76,11 +75,9 @@ def get_mqtt_client(conn_params):
 
 def extract_event_params(event):
     slots = event["request"]["intent"]["slots"]
-    location = slots["location"]["value"]
-    light_name = slots["light_name"]["value"]
+    device_name = slots["name"]["value"]
     state = slots["state"]["value"]
     return {
-        "location": location,
-        "light_name": light_name,
+        "light_name": device_name,
         "state": state
     }
