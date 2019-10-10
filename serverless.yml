@@ -1,39 +1,42 @@
 service: home-hub
 #app: your-app-name
 #tenant: your-tenant-name
+custom:
+  tableName: ${self:provider.stage}-devices
 
 provider:
   name: aws
   runtime: python3.7
 
-#  stage: dev
+  stage: dev
   region: us-east-1
 
-# you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
+  # you can add statements to the Lambda function's IAM Role here
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      # Restrict our IAM role permissions to
+      # the specific table for the stage
+      Resource:
+          - "Fn::GetAtt": [ DevicesTable, Arn ]
 
-# you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+  # These environment variables are made available to our functions
+  # under process.env.
+  environment:
+    tableName: ${self:custom.tableName}
 
-# you can add packaging information here
-#package:
-#  include:
-#    - include-me.py
-#    - include-me-dir/**
+  # you can add packaging information here
+  #package:
+  #  include:
+  #    - include-me.py
+  #    - include-me-dir/**
   exclude:
     - .idea/**
 #    - exclude-me-dir/**
@@ -41,18 +44,18 @@ provider:
 functions:
   lambda:
     handler: service.handler
-#    The following are a few example events you can configure
-#    NOTE: Please make sure to change your handler code to work with those events
-#    Check the event documentation for details
+    #    The following are a few example events you can configure
+    #    NOTE: Please make sure to change your handler code to work with those events
+    #    Check the event documentation for details
     events:
-#      - http:
-#          path: users/create
-#          method: get
-#      - websocket: $connect
-#      - s3: ${env:BUCKET}
-#      - schedule: rate(10 minutes)
-#      - sns: greeter-topic
-#      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
+      #      - http:
+      #          path: users/create
+      #          method: get
+      #      - websocket: $connect
+      #      - s3: ${env:BUCKET}
+      #      - schedule: rate(10 minutes)
+      #      - sns: greeter-topic
+      #      - stream: arn:aws:dynamodb:region:XXXXXX:table/foo/stream/1970-01-01T00:00:00.000
       - alexaSkill: amzn1.ask.skill.fa5e222d-7762-4db6-8161-4be6648262c4
 #      - alexaSmartHome: amzn1.ask.skill.xx-xx-xx-xx
 #      - iot:
@@ -82,7 +85,9 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
+resources:
+  #  DynamoDB
+  - ${file(resources/dynamo-table.yml)}
 #  Resources:
 #    NewResource:
 #      Type: AWS::S3::Bucket
