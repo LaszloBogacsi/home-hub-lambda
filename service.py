@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 
-import boto3 as boto3
+import boto3
+import json
+import decimal
+from boto3.dynamodb.conditions import Key, Attr
+from botocore.exceptions import ClientError
 
-# from mqtt.mqtt_client import MqttClient
+from mqtt.mqtt_client import MqttClient
 
 
 def handler(event, context):
@@ -17,6 +21,7 @@ def handler(event, context):
 
     # client = get_mqtt_client(get_connection_params(boto3.client('ssm')))
     print(extract_event_params(event))
+    get_from_dynamo()
     # payload = payload_builder(extract_event_params(event), get_id_by)
     # print(payload)
     # client.publish(topic="remote/switch/relay", payload=payload)
@@ -81,3 +86,34 @@ def extract_event_params(event):
         "light_name": device_name,
         "state": state
     }
+
+def get_from_dynamo():
+    dynamodb = boto3.resource("dynamodb", region_name='us-east-1')
+
+    table_name = 'dev-devices'
+    table = dynamodb.Table(table_name)
+    name = 'one lights'
+    try:
+        response = table.get_item(
+            Key={
+                'name': name,
+                'location': 'living room'
+            }
+        )
+    except ClientError as e:
+        print(e.response['Error']['Message'])
+    else:
+
+        item = response['Item']
+        print("GetItem succeeded:")
+        print(json.dumps(item, indent=4, cls=DecimalEncoder))
+
+
+class DecimalEncoder(json.JSONEncoder):
+    def default(self, o):
+        if isinstance(o, decimal.Decimal):
+            if o % 1 > 0:
+                return float(o)
+            else:
+                return int(o)
+        return super(DecimalEncoder, self).default(o)
