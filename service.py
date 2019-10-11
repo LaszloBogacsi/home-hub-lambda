@@ -21,7 +21,8 @@ def handler(event, context):
 
     # client = get_mqtt_client(get_connection_params(boto3.client('ssm')))
     print(extract_event_params(event))
-    get_from_dynamo()
+    name = 'living room'
+    get_devices_by_name(name)
     # payload = payload_builder(extract_event_params(event), get_id_by)
     # print(payload)
     # client.publish(topic="remote/switch/relay", payload=payload)
@@ -87,26 +88,34 @@ def extract_event_params(event):
         "state": state
     }
 
-def get_from_dynamo():
-    dynamodb = boto3.resource("dynamodb", region_name='us-east-1')
 
+def get_devices_by_name(name: str):
+    get_from_dynamo(name)
+
+
+def get_from_dynamo(name: str):
+    dynamodb = boto3.resource("dynamodb", region_name='us-east-1')
     table_name = 'dev-devices'
+
     table = dynamodb.Table(table_name)
-    name = 'one lights'
     try:
-        response = table.get_item(
-            Key={
-                'name': name,
-                'location': 'living room'
-            }
+        response1 = table.query(
+            KeyConditionExpression=Key('name').eq(name)
         )
+        response2 = table.query(
+            AttributeConditionExpression=Key('location').eq(name)
+        )
+
+
     except ClientError as e:
         print(e.response['Error']['Message'])
     else:
-
-        item = response['Item']
         print("GetItem succeeded:")
-        print(json.dumps(item, indent=4, cls=DecimalEncoder))
+        for i in response1['Items']:
+            print(json.dumps(i, indent=4, cls=DecimalEncoder))
+        for i in response2['Items']:
+            print(json.dumps(i, indent=4, cls=DecimalEncoder))
+
 
 
 class DecimalEncoder(json.JSONEncoder):

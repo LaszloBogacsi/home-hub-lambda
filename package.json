@@ -1,0 +1,25 @@
+{
+  "name": "home-hub-lambda",
+  "version": "1.0.0",
+  "description": "AWS lambda function to provide connection between Alexa and Cloud MQTT to message between a Raspberry Pi",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/LaszloBogacsi/home-hub-lambda.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/LaszloBogacsi/home-hub-lambda/issues"
+  },
+  "homepage": "https://github.com/LaszloBogacsi/home-hub-lambda#readme",
+  "dependencies": {
+    "serverless-python-requirements": "^5.0.0"
+  }
+}
