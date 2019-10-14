@@ -99,6 +99,8 @@ def get_from_dynamo(name: str):
 
     table = dynamodb.Table(table_name)
     try:
+        # TODO: FIX this as now the keys are the group_id and device_id, possibly scan and filter is an option
+        # the returned data blob should not be greater than 100 rows so it still should stay efficient to scan the whole table
         response1 = table.query(
             KeyConditionExpression=Key('name').eq(name)
         )
