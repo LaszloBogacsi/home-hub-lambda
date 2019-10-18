@@ -6,6 +6,8 @@ import json
 import boto3
 from boto3.dynamodb.conditions import Attr
 
+from mqtt.MqttClient import MqttClient
+
 
 def handler(event, context):
     # TODO: Save group names to dynamo and read from there
@@ -16,13 +18,13 @@ def handler(event, context):
     # TODO: https://developer.amazon.com/docs/smapi/interaction-model-operations.html#update-interaction-model saving/updating a group name or light name would feed back to
     #        alexas interaction model (teaching the model), https://developer.amazon.com/docs/smapi/interaction-model-schema.html
 
-    # client = get_mqtt_client(get_connection_params(boto3.client('ssm')))
-    # print(extract_event_params(event))
+    client = get_mqtt_client(get_connection_params(boto3.client('ssm')))
+    print(extract_event_params(event))
     name = 'Another Lighties'
     get_devices_by_name(name)
-    # payload = payload_builder(extract_event_params(event), get_id_by)
-    # print(payload)
-    # client.publish(topic="remote/switch/relay", payload=payload)
+    payload = payload_builder(extract_event_params(event), get_id_by)
+    print(payload)
+    client.publish(topic="remote/switch/relay", payload=payload)
     return {
         "version": "string",
         "response": {
@@ -73,7 +75,7 @@ def get_connection_params(ssm):
 
 
 def get_mqtt_client(conn_params):
-    # return MqttClient(conn_params["username"], conn_params["password"], conn_params["host"], conn_params["port"])
+    return MqttClient(conn_params["username"], conn_params["password"], conn_params["host"], conn_params["port"])
     pass
 
 
