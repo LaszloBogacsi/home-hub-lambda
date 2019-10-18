@@ -4,25 +4,24 @@ import decimal
 import json
 
 import boto3
-from boto3.dynamodb.conditions import Attr
+from boto3.dynamodb.conditions import Attr, Or
 
 from mqtt.MqttClient import MqttClient
 
 
 def handler(event, context):
-    # TODO: Save group names to dynamo and read from there
-    # TODO: Save Single device names to dynamo and read from there
-    # TODO: Save Location names to dynamo and read from there
     # TODO: Use the device return messages to update local postgres db to acknowledge state of devices. So that home-hub will reflect Alexa state.
     # TODO: Better Alexa response message composed of location + status
     # TODO: https://developer.amazon.com/docs/smapi/interaction-model-operations.html#update-interaction-model saving/updating a group name or light name would feed back to
     #        alexas interaction model (teaching the model), https://developer.amazon.com/docs/smapi/interaction-model-schema.html
 
     client = get_mqtt_client(get_connection_params(boto3.client('ssm')))
-    print(extract_event_params(event))
-    name = 'Another Lighties'
+    device_info = extract_event_params(event)
+    name = device_info.name
+    print(name)
+    name = "living room"
     get_devices_by_name(name)
-    payload = payload_builder(extract_event_params(event), get_id_by)
+    payload = payload_builder(device_info, get_id_by) # TODO: Create payload from returned items. Handle no items returned case, handle error case
     print(payload)
     client.publish(topic="remote/switch/relay", payload=payload)
     return {
@@ -52,13 +51,13 @@ def get_id_by(location, light_name):
 
 
 def payload_builder(params, id_getter):
-    state = params["state"]
-    location = params["location"]
-    light_name = params["light_name"]
+    state = params.state
+    # location = params["location"]
+    light_name = params.name
 
     device_status = status[0] if state == "on" else status[1]
-    light_id = id_getter(location, light_name)
-    return "{\"status\":\"" + device_status + "\",\"relay_id\":\"" + light_id + "\"}"
+    # light_id = id_getter(location, light_name)
+    # return "{\"status\":\"" + device_status + "\",\"relay_id\":\"" + light_id + "\"}"
 
 
 def get_connection_params(ssm):
@@ -79,14 +78,20 @@ def get_mqtt_client(conn_params):
     pass
 
 
-def extract_event_params(event):
+class DeviceInfo:
+    name: str
+    state: str
+
+    def __init__(self, name, state) -> None:
+        self.name = name
+        self.state = state
+
+
+def extract_event_params(event) -> DeviceInfo:
     slots = event["request"]["intent"]["slots"]
     device_name = slots["name"]["value"]
     state = slots["state"]["value"]
-    return {
-        "light_name": device_name,
-        "state": state
-    }
+    return DeviceInfo(device_name, state)
 
 
 def get_devices_by_name(name: str):
@@ -98,11 +103,9 @@ def get_from_dynamo(name: str):
     table_name = 'dev-devices'
     table = dynamodb.Table(table_name)
 
-    fe = Attr('d_name').eq(name)
-    pe = "#g_id, #d_id, d_name"
-    # Expression Attribute Names for Projection Expression only.
-    ean = {"#g_id": "group_id", "#d_id": "device_id"}
-    esk = None
+    fe = Or(Attr('name').eq(name), Attr("location").eq(name))
+    pe = "#g_id, #d_id, #name, #is_group, #delay, #loc"
+    ean = {"#g_id": "group_id", "#d_id": "device_id", "#name": "name", "#is_group": "is_group",  "#delay": 'delay', "#loc": "location"}
 
     response = table.scan(
         FilterExpression=fe,
@@ -124,6 +127,7 @@ def get_from_dynamo(name: str):
         for i in response['Items']:
             print(json.dumps(i, cls=DecimalEncoder))
     print(response)
+    # TODO: Handle multiple return properly, multiple items, and items with multiple device_ids.
     return response['Items']
 
 

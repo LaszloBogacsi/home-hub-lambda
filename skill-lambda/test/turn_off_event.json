@@ -62,7 +62,7 @@
       "slots": {
         "name": {
           "name": "name",
-          "value": "all lights",
+          "value": "Light 2",
           "resolutions": {
             "resolutionsPerAuthority": [
               {
