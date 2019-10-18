@@ -1,16 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import boto3
-import json
 import decimal
-from boto3.dynamodb.conditions import Key, Attr
-from botocore.exceptions import ClientError
+import json
 
-from mqtt.mqtt_client import MqttClient
+import boto3
+from boto3.dynamodb.conditions import Attr
 
 
 def handler(event, context):
-
     # TODO: Save group names to dynamo and read from there
     # TODO: Save Single device names to dynamo and read from there
     # TODO: Save Location names to dynamo and read from there
@@ -20,8 +17,8 @@ def handler(event, context):
     #        alexas interaction model (teaching the model), https://developer.amazon.com/docs/smapi/interaction-model-schema.html
 
     # client = get_mqtt_client(get_connection_params(boto3.client('ssm')))
-    print(extract_event_params(event))
-    name = 'living room'
+    # print(extract_event_params(event))
+    name = 'Another Lighties'
     get_devices_by_name(name)
     # payload = payload_builder(extract_event_params(event), get_id_by)
     # print(payload)
@@ -76,7 +73,8 @@ def get_connection_params(ssm):
 
 
 def get_mqtt_client(conn_params):
-    return MqttClient(conn_params["username"], conn_params["password"], conn_params["host"], conn_params["port"])
+    # return MqttClient(conn_params["username"], conn_params["password"], conn_params["host"], conn_params["port"])
+    pass
 
 
 def extract_event_params(event):
@@ -90,34 +88,41 @@ def extract_event_params(event):
 
 
 def get_devices_by_name(name: str):
-    get_from_dynamo(name)
+    return get_from_dynamo(name)
 
 
 def get_from_dynamo(name: str):
     dynamodb = boto3.resource("dynamodb", region_name='us-east-1')
     table_name = 'dev-devices'
-
     table = dynamodb.Table(table_name)
-    try:
-        # TODO: FIX this as now the keys are the group_id and device_id, possibly scan and filter is an option
-        # the returned data blob should not be greater than 100 rows so it still should stay efficient to scan the whole table
-        response1 = table.query(
-            KeyConditionExpression=Key('name').eq(name)
+
+    fe = Attr('d_name').eq(name)
+    pe = "#g_id, #d_id, d_name"
+    # Expression Attribute Names for Projection Expression only.
+    ean = {"#g_id": "group_id", "#d_id": "device_id"}
+    esk = None
+
+    response = table.scan(
+        FilterExpression=fe,
+        ProjectionExpression=pe,
+        ExpressionAttributeNames=ean
+    )
+
+    for i in response['Items']:
+        print(json.dumps(i, cls=DecimalEncoder))
+
+    while 'LastEvaluatedKey' in response:
+        response = table.scan(
+            ProjectionExpression=pe,
+            FilterExpression=fe,
+            ExpressionAttributeNames=ean,
+            ExclusiveStartKey=response['LastEvaluatedKey']
         )
-        response2 = table.query(
-            AttributeConditionExpression=Key('location').eq(name)
-        )
 
-
-    except ClientError as e:
-        print(e.response['Error']['Message'])
-    else:
-        print("GetItem succeeded:")
-        for i in response1['Items']:
-            print(json.dumps(i, indent=4, cls=DecimalEncoder))
-        for i in response2['Items']:
-            print(json.dumps(i, indent=4, cls=DecimalEncoder))
-
+        for i in response['Items']:
+            print(json.dumps(i, cls=DecimalEncoder))
+    print(response)
+    return response['Items']
 
 
 class DecimalEncoder(json.JSONEncoder):
