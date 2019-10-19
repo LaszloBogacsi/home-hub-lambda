@@ -7,6 +7,7 @@ provider:
 
   stage: dev
   region: us-east-1
+  timeout: 10
   iamManagedPolicies:
     - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 

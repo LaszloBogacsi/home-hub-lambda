@@ -1,6 +1,7 @@
 import decimal
 import json
 import random
+import time
 
 import boto3
 from boto3.dynamodb.conditions import Attr, Or
@@ -23,7 +24,8 @@ def handler(event, context):
         for payload in payloads:
             print(payload)
             client.publish(topic="remote/switch/relay", payload=payload)
-
+            time.sleep(0.5)
+        client.on_all_finished()
         if len(devices_to_notify) == 0:
             return response('No device found')
 
@@ -53,7 +55,7 @@ def response(text):
 
 def payload_builder(params, devices_to_notify):
     state = params.state
-    payloads = ["{\"status\":\"" + state + "\",\"relay_id\":\"" + device['device_id'] + "\"}" for device in devices_to_notify]
+    payloads = ["{\"status\":\"" + state + "\",\"device_id\":\"" + device['device_id'] + "\"}" for device in devices_to_notify]
     return payloads
 
 
@@ -91,7 +93,7 @@ def extract_event_params(event) -> DeviceInfo:
     state = slots["state"]["value"]
     if state:
         state = state.upper()
-    return DeviceInfo(device_name, state)
+    return DeviceInfo(device_name.lower(), state)
 
 
 def get_devices_by_name(name: str):
