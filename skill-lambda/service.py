@@ -1,7 +1,6 @@
-# -*- coding: utf-8 -*-
-
 import decimal
 import json
+import random
 
 import boto3
 from boto3.dynamodb.conditions import Attr, Or
@@ -14,22 +13,37 @@ def handler(event, context):
     # TODO: Better Alexa response message composed of location + status
     # TODO: https://developer.amazon.com/docs/smapi/interaction-model-operations.html#update-interaction-model saving/updating a group name or light name would feed back to
     #        alexas interaction model (teaching the model), https://developer.amazon.com/docs/smapi/interaction-model-schema.html
+    try:
+        client = get_mqtt_client(get_connection_params(boto3.client('ssm')))
+        device_info = extract_event_params(event)
+        name = device_info.name
+        devices_to_notify = flatten(get_devices_by_name(name))
+        payloads = payload_builder(device_info, devices_to_notify)
+        print(payloads)
+        for payload in payloads:
+            print(payload)
+            client.publish(topic="remote/switch/relay", payload=payload)
 
-    client = get_mqtt_client(get_connection_params(boto3.client('ssm')))
-    device_info = extract_event_params(event)
-    name = device_info.name
-    print(name)
-    name = "living room"
-    get_devices_by_name(name)
-    payload = payload_builder(device_info, get_id_by) # TODO: Create payload from returned items. Handle no items returned case, handle error case
-    print(payload)
-    client.publish(topic="remote/switch/relay", payload=payload)
+        if len(devices_to_notify) == 0:
+            return response('No device found')
+
+        return response(get_positive_answer())
+
+    except Exception as e:
+        return response(e)
+
+
+def get_positive_answer():
+    return random.choice(["OK", "Sure", "Done", "As you wish", "Yepp"])
+
+
+def response(text):
     return {
         "version": "string",
         "response": {
             "outputSpeech": {
                 "type": "PlainText",
-                "text": 'OK',
+                "text": text,
                 "playBehavior": "REPLACE_ENQUEUED"
             },
             "shouldEndSession": "true"
@@ -37,27 +51,10 @@ def handler(event, context):
     }
 
 
-devices = ('table lamp', 'standing lamp', 'fairy lights', 'cupboard lights')
-locations = ('living room', 'kitchen', 'bed room')
-status = ('ON', 'OFF')
-location_id_map = [
-    {'location': locations[0], 'name': devices[0], 'id': '1'},
-    {'location': locations[0], 'name': devices[2], 'id': '2'}
-]
-
-
-def get_id_by(location, light_name):
-    return next(x for x in location_id_map if x.get('location') == location and x.get('name') == light_name).get('id')
-
-
-def payload_builder(params, id_getter):
+def payload_builder(params, devices_to_notify):
     state = params.state
-    # location = params["location"]
-    light_name = params.name
-
-    device_status = status[0] if state == "on" else status[1]
-    # light_id = id_getter(location, light_name)
-    # return "{\"status\":\"" + device_status + "\",\"relay_id\":\"" + light_id + "\"}"
+    payloads = ["{\"status\":\"" + state + "\",\"relay_id\":\"" + device['device_id'] + "\"}" for device in devices_to_notify]
+    return payloads
 
 
 def get_connection_params(ssm):
@@ -88,9 +85,12 @@ class DeviceInfo:
 
 
 def extract_event_params(event) -> DeviceInfo:
+    print(event)
     slots = event["request"]["intent"]["slots"]
     device_name = slots["name"]["value"]
     state = slots["state"]["value"]
+    if state:
+        state = state.upper()
     return DeviceInfo(device_name, state)
 
 
@@ -105,7 +105,8 @@ def get_from_dynamo(name: str):
 
     fe = Or(Attr('name').eq(name), Attr("location").eq(name))
     pe = "#g_id, #d_id, #name, #is_group, #delay, #loc"
-    ean = {"#g_id": "group_id", "#d_id": "device_id", "#name": "name", "#is_group": "is_group",  "#delay": 'delay', "#loc": "location"}
+    ean = {"#g_id": "group_id", "#d_id": "device_id", "#name": "name", "#is_group": "is_group", "#delay": 'delay', "#loc": "location"}
+    all_responses = []
 
     response = table.scan(
         FilterExpression=fe,
@@ -114,7 +115,7 @@ def get_from_dynamo(name: str):
     )
 
     for i in response['Items']:
-        print(json.dumps(i, cls=DecimalEncoder))
+        all_responses.append(i)
 
     while 'LastEvaluatedKey' in response:
         response = table.scan(
@@ -123,19 +124,29 @@ def get_from_dynamo(name: str):
             ExpressionAttributeNames=ean,
             ExclusiveStartKey=response['LastEvaluatedKey']
         )
-
         for i in response['Items']:
-            print(json.dumps(i, cls=DecimalEncoder))
-    print(response)
-    # TODO: Handle multiple return properly, multiple items, and items with multiple device_ids.
-    return response['Items']
+            all_responses.append(i)
+    print(all_responses)
+    return all_responses
 
 
-class DecimalEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, decimal.Decimal):
-            if o % 1 > 0:
-                return float(o)
-            else:
-                return int(o)
-        return super(DecimalEncoder, self).default(o)
+def flatten(devices: [object]):
+    flattened_devices = []
+    for device in devices:
+        print(device)
+        ids = device['device_id'].split(',')
+        for id in ids:
+            new_dev = device.copy()
+            new_dev.update({'device_id': id})
+            flattened_devices.append(new_dev)
+
+    return flattened_devices
+
+
+if __name__ == "__main__":
+    test_devices = [
+        {"device_id": "502,503,504", "is_group": True, "location": "living room", "name": "Some name of this lamp", "group_id": "502", "delay": 0},
+        {"device_id": "501", "is_group": False, "location": "living room", "name": "Some name of this lamp", "group_id": "501", "delay": 0}
+    ]
+    # devs = flatten(test_devices)
+    # payload_builder(DeviceInfo('living room', 'OFF'), devs)

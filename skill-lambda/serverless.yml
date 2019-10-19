@@ -7,6 +7,8 @@ provider:
 
   stage: dev
   region: us-east-1
+  iamManagedPolicies:
+    - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 
   # you can add statements to the Lambda function's IAM Role here
   iamRoleStatements:
@@ -23,6 +25,14 @@ provider:
       # the specific table for the stage
       Resource:
         - "Fn::GetAtt": [ DevicesTable, Arn ]
+
+    - Effect: "Allow"
+      Action:
+        - ssm:GetParameter
+      # Restrict our IAM role permissions to
+      # the specific table for the stage
+      Resource:
+        - "*"
 
 
   # These environment variables are made available to our functions

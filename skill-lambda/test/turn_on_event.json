@@ -78,7 +78,7 @@
         },
         "state": {
           "name": "state",
-          "value": "OFF",
+          "value": "ON",
           "resolutions": {
             "resolutionsPerAuthority": [
               {
