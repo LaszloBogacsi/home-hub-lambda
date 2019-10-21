@@ -32,7 +32,7 @@ def handler(event, context):
         return response(get_positive_answer())
 
     except Exception as e:
-        return response(e)
+        return response('oops, something went wrong')
 
 
 def get_positive_answer():
