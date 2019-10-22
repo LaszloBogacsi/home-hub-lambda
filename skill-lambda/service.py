@@ -12,8 +12,7 @@ from mqtt.MqttClient import MqttClient
 def handler(event, context):
     # TODO: Use the device return messages to update local postgres db to acknowledge state of devices. So that home-hub will reflect Alexa state.
     # TODO: Better Alexa response message composed of location + status
-    # TODO: https://developer.amazon.com/docs/smapi/interaction-model-operations.html#update-interaction-model saving/updating a group name or light name would feed back to
-    #        alexas interaction model (teaching the model), https://developer.amazon.com/docs/smapi/interaction-model-schema.html
+
     try:
         client = get_mqtt_client(get_connection_params(boto3.client('ssm')))
         device_info = extract_event_params(event)
