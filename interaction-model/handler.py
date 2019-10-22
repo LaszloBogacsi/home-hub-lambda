@@ -5,6 +5,9 @@ def handle(event, context):
     # TODO: https://developer.amazon.com/docs/smapi/interaction-model-operations.html#update-interaction-model saving/updating a group name or light name would feed back to
     #        alexas interaction model (teaching the model), https://developer.amazon.com/docs/smapi/interaction-model-schema.html
 
+    skill_id = "amzn1.ask.skill.fa5e222d-7762-4db6-8161-4be6648262c4"
+    stage = "development"
+    locale = "us-east-1"
     url = "PUT /v1/skills/{skillId}/stages/{stage}/interactionModel/locales/{locale}"
     skill_invocation_name = "home hub"
     generate_device_names = {
