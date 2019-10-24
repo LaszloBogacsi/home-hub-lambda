@@ -1,4 +1,3 @@
-import decimal
 import json
 import random
 import time
@@ -14,7 +13,16 @@ def handler(event, context):
     # TODO: Better Alexa response message composed of location + status
 
     try:
-        client = get_mqtt_client(get_connection_params(boto3.client('ssm')))
+        if event['request']['intent']['name'] == 'rebuild':
+            lambda_client = boto3.client('lambda')
+            lambda_response = lambda_client.invoke(FunctionName='home-hub-interaction-model-dev-lambda',
+                                                   InvocationType='RequestResponse',
+                                                   Payload=json.dumps(event))
+            answer = lambda_response['Payload'].read().decode()
+            print(answer)
+            return json.loads(answer)
+
+        mqtt_client = get_mqtt_client(get_connection_params(boto3.client('ssm')))
         device_info = extract_event_params(event)
         name = device_info.name
         devices_to_notify = flatten(get_devices_by_name(name))
@@ -22,9 +30,9 @@ def handler(event, context):
         print(payloads)
         for payload in payloads:
             print(payload)
-            client.publish(topic="remote/switch/relay", payload=payload)
+            mqtt_client.publish(topic="remote/switch/relay", payload=payload)
             time.sleep(0.5)
-        client.on_all_finished()
+        mqtt_client.on_all_finished()
         if len(devices_to_notify) == 0:
             return response('No device found')
 

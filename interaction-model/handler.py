@@ -5,20 +5,17 @@ import boto3
 
 
 def handle(event, context):
-    # TODO: https://developer.amazon.com/docs/smapi/interaction-model-operations.html#update-interaction-model saving/updating a group name or light name would feed back to
-    #        alexas interaction model (teaching the model), https://developer.amazon.com/docs/smapi/interaction-model-schema.html
-    # TODO: https://developer.amazon.com/settings/console/securityprofile/web-settings/view.html?identityAppFamilyId=amzn1.application.a7067441a49e4524911677c1c23bf8a3
-    #       to use the SMAPI need to implement oauth2.0 with amazon login
-
     skill_id = "amzn1.ask.skill.fa5e222d-7762-4db6-8161-4be6648262c4"
     stage = "development"
     locale = "en-GB"
-
     skill_invocation_name = "home hub"
-    api_access_token = event['context']['System']['apiAccessToken']
     api_endpoint = 'https://api.amazonalexa.com'
-    scope = 'alexa::ask:models:readwrite'
     url = "{}/v1/skills/{}/stages/{}/interactionModel/locales/{}".format(api_endpoint, skill_id, stage, locale)
+    access_token = event['context']['System']['user'].get('accessToken', None)
+
+    if access_token is None:
+        print("requesting account linking...")
+        return card_requesting_account_linking()
 
     def generate_device_name(name: str):
         return {
@@ -26,9 +23,9 @@ def handle(event, context):
                 "value": name
             }
         }
-
+    print('getting device names')
     device_names = [generate_device_name(name) for name in to_list(get_all_names_and_locations_from_dynamo())]
-
+    print("got {} devices".format(len(device_names)))
     interaction_model_schema = {
         "interactionModel": {
             "languageModel": {
@@ -143,18 +140,21 @@ def handle(event, context):
 
         }
     }
-    req = urllib.request.Request(url, interaction_model_schema, {"Authorization": "Bearer {}".format(api_access_token)}, method='PUT')
+    req = urllib.request.Request(url, interaction_model_schema, {"Authorization": "Bearer {}".format(access_token)}, method='PUT')
     response = urllib.request.urlopen(req)
     html = response.read()
     json_obj = json.loads(html)
-    body = {
-        "message": "Go Serverless v1.0! Your function executed successfully!",
-        "input": event
-    }
-
+    print(json_obj)
     response = {
-        "statusCode": 200,
-        "body": json.dumps(body)
+        "version": "1.0",
+        "response": {
+            "outputSpeech": {
+                "type": "PlainText",
+                "text": "Rebuild complete",
+                "playBehavior": "REPLACE_ENQUEUED"
+            },
+            "shouldEndSession": "true"
+        }
     }
 
     return response
@@ -191,6 +191,22 @@ def get_all_names_and_locations_from_dynamo():
 
 def to_list(response):
     return list(set(res for res in response for res in res.values() if res != 'None'))
+
+
+def card_requesting_account_linking():
+    return {
+        "version": "1.0",
+        "response": {
+            "outputSpeech": {
+                "type": "PlainText",
+                "text": "Please authenticate with you amazon account to use this feature, for further information please visit your alexa app."
+            },
+            "card": {
+                "type" : "LinkAccount"
+            },
+            "shouldEndSession": "true"
+        }
+    }
 
 
 if __name__ == '__main__':

@@ -34,6 +34,10 @@ provider:
       # the specific table for the stage
       Resource:
         - "*"
+    - Effect: Allow
+      Action:
+        - lambda:InvokeFunction
+      Resource: "*"
 
 
   # These environment variables are made available to our functions
