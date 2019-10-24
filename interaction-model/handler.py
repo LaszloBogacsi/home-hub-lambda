@@ -5,6 +5,7 @@ import boto3
 
 
 def handle(event, context):
+    print(event)
     skill_id = "amzn1.ask.skill.fa5e222d-7762-4db6-8161-4be6648262c4"
     stage = "development"
     locale = "en-GB"
@@ -89,7 +90,7 @@ def handle(event, context):
             "dialog": {
                 "intents": [
                     {
-                        "name": "GetTravelTime",
+                        "name": "deviceOnOff",
                         "confirmationRequired": False,
                         "prompts": {},
                         "slots": [
@@ -140,7 +141,11 @@ def handle(event, context):
 
         }
     }
-    req = urllib.request.Request(url, interaction_model_schema, {"Authorization": "Bearer {}".format(access_token)}, method='PUT')
+    payload_str = json.dumps(interaction_model_schema)
+    print(payload_str)
+    print(access_token)
+    print(url)
+    req = urllib.request.Request(url, payload_str.encode(), {"Authorization": "Bearer {}".format(access_token)}, method='PUT')
     response = urllib.request.urlopen(req)
     html = response.read()
     json_obj = json.loads(html)

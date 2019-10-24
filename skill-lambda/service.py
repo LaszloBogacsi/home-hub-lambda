@@ -46,7 +46,7 @@ def get_positive_answer():
     return random.choice(["OK", "Sure", "Done", "As you wish", "Yepp"])
 
 
-def response(text):
+def response(text, should_end_session='true'):
     return {
         "version": "string",
         "response": {
@@ -55,7 +55,7 @@ def response(text):
                 "text": text,
                 "playBehavior": "REPLACE_ENQUEUED"
             },
-            "shouldEndSession": "true"
+            "shouldEndSession": should_end_session
         }
     }
 

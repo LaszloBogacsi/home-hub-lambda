@@ -32,6 +32,15 @@ provider:
   iamManagedPolicies:
     - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - dynamodb:Query
+        - dynamodb:Scan
+      # Restrict our IAM role permissions to
+      # the specific table for the stage
+      Resource:
+        - "arn:aws:dynamodb:us-east-1:982689203849:table/dev-devices"
 
 # you can define service wide environment variables here
 #  environment:
