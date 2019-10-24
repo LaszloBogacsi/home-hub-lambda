@@ -12,7 +12,7 @@ def handle(event, context):
 
     skill_id = "amzn1.ask.skill.fa5e222d-7762-4db6-8161-4be6648262c4"
     stage = "development"
-    locale = "en-US"
+    locale = "en-GB"
 
     skill_invocation_name = "home hub"
     api_access_token = event['context']['System']['apiAccessToken']
