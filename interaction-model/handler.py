@@ -16,7 +16,7 @@ def handle(event, context):
         skill_invocation_name = "home hub"
         api_endpoint = 'https://api.amazonalexa.com'
         url = "{}/v1/skills/{}/stages/{}/interactionModel/locales/{}".format(api_endpoint, skill_id, stage, locale)
-        access_token = event['context']['System']['user'].get('accessToken', None)
+        access_token = event['context']['system']['user'].get('access_token', None)
 
         if access_token is None:
             logger.info("requesting account linking...")
