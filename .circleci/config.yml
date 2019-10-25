@@ -9,10 +9,10 @@ jobs:
     steps:
       - checkout
 
-      - run:
-         command: |
-           cd skill-lambda
-           pipenv install
+#      - run:
+#         command: |
+#           cd skill-lambda
+#           pipenv install
 
       - run:
           name: build skill lambda
@@ -28,10 +28,10 @@ jobs:
     steps:
       - checkout
 
-      - run:
-          command: |
-            cd interaction-model
-            pipenv install
+#      - run:
+#          command: |
+#            cd interaction-model
+#            pipenv install
 
       - run:
           name: build interaction model lambda
