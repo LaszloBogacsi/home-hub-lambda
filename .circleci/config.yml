@@ -1,7 +1,3 @@
-# Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
 version: 2
 jobs:
   build_skill_lambda:
@@ -21,7 +17,7 @@ jobs:
       - run:
           name: build skill lambda
           command: |
-            cd skill-lambda && npm install && npm i -g serverless  && serverless deploy
+            cd skill-lambda && npm i -g serverless && npm i && serverless deploy
 
   build_interaction_model_lambda:
     docker:
@@ -40,7 +36,7 @@ jobs:
       - run:
           name: build interaction model lambda
           command: |
-            cd interaction-model && npm install && npm i -g serverless && serverless deploy
+            cd interaction-model && npm i -g serverless && npm i && serverless deploy
 
 workflows:
   version: 2
