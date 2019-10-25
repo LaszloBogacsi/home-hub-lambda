@@ -16,7 +16,9 @@ jobs:
       - run:
          command: |
            cd skill-lambda
-           apt install python-pip
+           sudo add-apt-repository universe
+           sudo apt update
+           sudo apt install python-pip
            pipenv install
 
       - run:
@@ -36,7 +38,9 @@ jobs:
       - run:
           command: |
             cd interaction-model
-            apt install python-pip
+            sudo add-apt-repository universe
+            sudo apt update
+            sudo apt install python-pip
             pipenv install
 
       - run:
