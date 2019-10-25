@@ -15,34 +15,36 @@ jobs:
     docker:
       - image: nikolaik/python-nodejs
 
-    working_directory: ~/repo/skill-lambda
+    working_directory: ~/repo
 
     steps:
       - checkout
 
       - run:
          command: |
+           cd skill-lambda
            pipenv install
 
       - run:
           name: build skill lambda
           command: |
-            npm install && npm i -g serverless  && serverless deploy
+            cd skill-lambda && npm install && npm i -g serverless  && serverless deploy
 
   build_interaction_model_lambda:
     docker:
       - image: nikolaik/python-nodejs
 
-    working_directory: ~/repo/interaction-model
+    working_directory: ~/repo
 
     steps:
       - checkout
 
       - run:
           command: |
+            cd interaction-model
             pipenv install
 
       - run:
           name: build interaction model lambda
           command: |
-            npm install && npm i -g serverless && serverless deploy
+            cd interaction-model && npm install && npm i -g serverless && serverless deploy
