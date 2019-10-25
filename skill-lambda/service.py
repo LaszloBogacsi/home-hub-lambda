@@ -5,6 +5,7 @@ from exceptions import SlotValueNotPresentException, CatchAllExceptionHandler
 from handlers import RebuildIntentHandler, DeviceOnOffIntentHandler
 from mqtt.MqttClient import MqttClient
 
+# TODO: CREATE aws service account for circle ci deployments
 
 def get_connection_params(ssm):
     password = ssm.get_parameter(Name='/homehub/cloudmqtt/password', WithDecryption=True)['Parameter']['Value']
