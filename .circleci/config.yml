@@ -46,7 +46,7 @@ workflows:
   version: 2
   build_and_deploy:
     jobs:
-      - build_skill_lambda
+      - build_skill_lambda:
           context: home-hub-deploy
-      - build_interaction_model_lambda
+      - build_interaction_model_lambda:
           context: home-hub-deploy
