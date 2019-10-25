@@ -15,34 +15,58 @@ jobs:
     docker:
       - image: circleci/python:3.6.1
 
-    working_directory: ~/repo
+    working_directory: ~/repo/skill-lambda
 
     steps:
       - checkout
 
-      - run:
-          name: install dependencies
-          command: pip3 install pipenv
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
+     - restore_cache:
+         # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+         key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+     - run:
+         command: |
+           sudo pip install pipenv
+           pipenv install
+     - save_cache: # cache Python dependencies using checksum of Pipfile as the cache-key
+         key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+         paths:
+           - ".venv"
+           - "/usr/local/bin"
+           - "/usr/local/lib/python3.6/site-packages"
 
       - run:
           name: build skill lambda
           command: |
-            cd skill-lambda && pipenv install && npm install && npm i -g serverless  && serverless deploy
+            npm install && npm i -g serverless  && serverless deploy
 
   build_interaction_model_lambda:
     docker:
       - image: circleci/python:3.6.1
 
-    working_directory: ~/repo
+    working_directory: ~/repo/interaction-model
 
     steps:
       - checkout
 
+      - run: sudo chown -R circleci:circleci /usr/local/bin
+      - run: sudo chown -R circleci:circleci /usr/local/lib/python3.6/site-packages
+      - restore_cache:
+          # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
       - run:
-          name: install dependencies
-          command: pipenv install
+          command: |
+            sudo pip install pipenv
+            pipenv install
+      - save_cache: # cache Python dependencies using checksum of Pipfile as the cache-key
+          key: deps9-{{ .Branch }}-{{ checksum "Pipfile.lock" }}
+          paths:
+            - ".venv"
+            - "/usr/local/bin"
+            - "/usr/local/lib/python3.6/site-packages"
 
       - run:
           name: build interaction model lambda
           command: |
-            cd interaction-model && npm install && npm i -g serverless  && serverless deploy
+            npm install && npm i -g serverless && serverless deploy
