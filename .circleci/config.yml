@@ -16,6 +16,7 @@ jobs:
       - run:
          command: |
            cd skill-lambda
+           apt install python-pip
            pipenv install
 
       - run:
@@ -35,6 +36,7 @@ jobs:
       - run:
           command: |
             cd interaction-model
+            apt install python-pip
             pipenv install
 
       - run:
