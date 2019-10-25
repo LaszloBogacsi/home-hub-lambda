@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a12ebab97377e4306783b5ff596a08f13f79fd6233c0ece3850ef16b05426caa"
+            "sha256": "0f88b0eb1a58557f5c7ac6634a723b80d211a9acc039bbb8ee358ce5340cfd6a"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -16,20 +16,70 @@
         ]
     },
     "default": {
-        "boto3": {
+        "ask-sdk": {
             "hashes": [
-                "sha256:13d90ebe4d41e1717d7cc015e983370aadba2995a2af30695f29b69f196e82fc",
-                "sha256:e50edae8ccb630dc1950332764c6b462a9550663a3d71c00f898280f1446f107"
+                "sha256:5267eeb8d24dca20bd29be0adc8d26ce4c46ac8b0795a19b0000d6681a1f6925",
+                "sha256:f14c2023d48965864565901e66b28b6aadf333c7de329ce4564b43e54615facb"
             ],
             "index": "pypi",
-            "version": "==1.9.247"
+            "version": "==1.11.0"
+        },
+        "ask-sdk-core": {
+            "hashes": [
+                "sha256:2650570a6d4ffd5d988ea8628b4175e3ca349b65c025748b0e4e0ecb55949243",
+                "sha256:94e345ae88b95bd669c885e206d87da177573bd2aa3ac3f4f0144585e5963a95"
+            ],
+            "version": "==1.11.0"
+        },
+        "ask-sdk-dynamodb-persistence-adapter": {
+            "hashes": [
+                "sha256:2d04e774da2f008e4a992ae53a880406fa4735904720b7fdc2b3e5b7abbefe14",
+                "sha256:8294e4ffbdbdbd975e0641a39fe2c4a0189beca64fecddc899c964fdb76be125"
+            ],
+            "version": "==1.11.0"
+        },
+        "ask-sdk-model": {
+            "hashes": [
+                "sha256:41ffe4ae1a993143d38c264ed280631b04f81fd5fca3efefa02deb0c79b27c69",
+                "sha256:4bb278366c738fec4a1c3df6e6d3830ff6d0c0666c807b39e4d635144186768d"
+            ],
+            "version": "==1.17.0"
+        },
+        "ask-sdk-runtime": {
+            "hashes": [
+                "sha256:2b9433b78254038aeb51a0793ea3ef25ac1b92846b195ca0b4ca2e2be643a237",
+                "sha256:df73ca390f50574b1f749ec1162ec5b70d8e6497230b286b65b246d2078644a5"
+            ],
+            "version": "==1.11.0"
+        },
+        "boto3": {
+            "hashes": [
+                "sha256:7fc97cb2c9cdff905e950750c8e8b23b872a84696158a28852355dc4b712ba3a",
+                "sha256:818c56a317c176142dbf1dca3f5b4366c80460c6cc3c4efe22f0bde736571283"
+            ],
+            "index": "pypi",
+            "version": "==1.10.2"
         },
         "botocore": {
             "hashes": [
-                "sha256:76ff516cfbe5c9f2ac4eb8bb5d8945bc7354d4898f2609ad32080efc9ecea751",
-                "sha256:fa425f3e24bb17a357a297532b253a7353a496f2be7b7a5c3fc1dd7419de259d"
+                "sha256:8223485841ef4731a5d4943a733295ba69d0005c4ae64c468308cc07f6960d39",
+                "sha256:f8e12dc6e536ea512f0ad25b74e7eecdf5d9e09ae92b5de236b535bee7804d5b"
             ],
-            "version": "==1.12.247"
+            "version": "==1.13.2"
+        },
+        "certifi": {
+            "hashes": [
+                "sha256:e4f3620cfea4f83eedc95b24abd9cd56f3c4b146dd0177e83a21b4eb49e21e50",
+                "sha256:fd7c7c74727ddcf00e9acd26bba8da604ffec95bf1c2144e67aff7a8b50e6cef"
+            ],
+            "version": "==2019.9.11"
+        },
+        "chardet": {
+            "hashes": [
+                "sha256:84ab92ed1c4d4f16916e05906b6b75a6c0fb5db821cc65e70cbd64a3e2a5eaae",
+                "sha256:fc323ffcaeaed0e0a02bf4d117757b98aed530d9ed4531e3e15460124c106691"
+            ],
+            "version": "==3.0.4"
         },
         "docutils": {
             "hashes": [
@@ -38,6 +88,13 @@
                 "sha256:a2aeea129088da402665e92e0b25b04b073c04b2dce4ab65caaa38b7ce2e1a99"
             ],
             "version": "==0.15.2"
+        },
+        "idna": {
+            "hashes": [
+                "sha256:c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407",
+                "sha256:ea8b7f6188e6fa117537c3df7da9fc686d485087abf6ac197f9c46432f7e4a3c"
+            ],
+            "version": "==2.8"
         },
         "jmespath": {
             "hashes": [
@@ -60,6 +117,13 @@
             ],
             "markers": "python_version >= '2.7'",
             "version": "==2.8.0"
+        },
+        "requests": {
+            "hashes": [
+                "sha256:11e007a8a2aa0323f5a921e9e6a2d7e4e67d9877e85773fba9ba6419025cbeb4",
+                "sha256:9cf5292fcd0f598c671cfc1e0d7d1a7f13bb8085e9a590f48c010551dc6c4b31"
+            ],
+            "version": "==2.22.0"
         },
         "s3transfer": {
             "hashes": [
