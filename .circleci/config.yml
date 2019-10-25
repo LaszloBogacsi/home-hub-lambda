@@ -22,12 +22,12 @@ jobs:
 
       - run:
           name: install dependencies
-          command: pipenv install
+          command: pip3 install pipenv
 
       - run:
           name: build skill lambda
           command: |
-            cd skill-lambda && npm install && npm i -g serverless  && serverless deploy
+            cd skill-lambda && pipenv install && npm install && npm i -g serverless  && serverless deploy
 
   build_interaction_model_lambda:
     docker:
