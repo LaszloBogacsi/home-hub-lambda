@@ -4,7 +4,7 @@ import logging
 import boto3
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.INFO)
+logger.setLevel(logging.DEBUG)
 
 
 def handle(event, context):
@@ -75,6 +75,13 @@ def generate_interaction_model_schema(device_names, skill_invocation_name):
                             "turn the {name} {state}",
                             "turn {name} {state}",
                             "turn {state} {name}",
+                        ]
+                    },
+                    {
+                        "name": "rebuild",
+                        "slots": [],
+                        "samples": [
+                            "rebuild",
                         ]
                     }
                 ],

@@ -1,8 +1,10 @@
 import json
+import logging
 
 import boto3
 from ask_sdk_core.dispatch_components import AbstractRequestHandler
 from ask_sdk_core.utils import is_intent_name
+logger = logging.getLogger(__name__)
 
 
 class RebuildIntentHandler(AbstractRequestHandler):
@@ -12,10 +14,11 @@ class RebuildIntentHandler(AbstractRequestHandler):
 
     def handle(self, handler_input):
         lambda_client = boto3.client('lambda')
+        logger.info("invoking lambda ...")
         params = {
             "FunctionName": 'home-hub-interaction-model-dev-lambda',
             "InvocationType": 'RequestResponse',
-            "Payload": json.dumps(handler_input.request_envelope.request)
+            "Payload": handler_input.request_envelope.request.to_str()
         }
         lambda_response = lambda_client.invoke(params)
 
