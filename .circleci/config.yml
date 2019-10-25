@@ -13,7 +13,7 @@ workflows:
 jobs:
   build_skill_lambda:
     docker:
-      - image: circleci/python:3.6.1
+      - image: nikolaik/python-nodejs
 
     working_directory: ~/repo/skill-lambda
 
@@ -43,7 +43,7 @@ jobs:
 
   build_interaction_model_lambda:
     docker:
-      - image: circleci/python:3.6.1
+      - image: nikolaik/python-nodejs
 
     working_directory: ~/repo/interaction-model
 
