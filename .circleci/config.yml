@@ -3,13 +3,6 @@
 # Check https://circleci.com/docs/2.0/language-python/ for more details
 #
 version: 2
-workflows:
-  version: 2
-  build_and_deploy:
-    jobs:
-      - build_skill_lambda
-      - build_interaction_model_lambda
-
 jobs:
   build_skill_lambda:
     docker:
@@ -48,3 +41,12 @@ jobs:
           name: build interaction model lambda
           command: |
             cd interaction-model && npm install && npm i -g serverless && serverless deploy
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build_skill_lambda
+        context: home-hub-deploy
+      - build_interaction_model_lambda
+        context: home-hub-deploy
