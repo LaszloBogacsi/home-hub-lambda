@@ -8,6 +8,8 @@ from ask_sdk_core.dispatch_components import AbstractRequestHandler
 from ask_sdk_core.utils import is_intent_name
 from ask_sdk_model.ui import Card
 
+from handlers.reponse.InteractionModelResponse import InteractionModelResponse
+
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
@@ -27,13 +29,14 @@ class RebuildIntentHandler(AbstractRequestHandler):
         }
         lambda_response = lambda_client.invoke(**params)
 
-        interaction_model_response: InteractionModelResponse = json.loads(lambda_response['Payload'].read().decode(), object_hook=to)
+        interaction_model_response: InteractionModelResponse = json.loads(lambda_response['Payload'].read().decode(), object_hook=to_obj("InteractionModelResponse"))
         if interaction_model_response.request_card_type != "None":
             logger.info("invoking lambda ...")
 
             return handler_input.response_builder.set_card(Card(interaction_model_response.request_card_type)).speak(interaction_model_response.message).response
         else:
             return handler_input.response_builder.speak(interaction_model_response.message).set_should_end_session(True).response
+
 
 def default_conv(o):
     if isinstance(o, datetime):
@@ -43,16 +46,10 @@ def default_conv(o):
         return float(dec)
     return o.__dict__
 
-# TODO: make this generic
-def to(obj):
-    return InteractionModelResponse(obj['requestCardType'], obj['message'])
 
-
-class InteractionModelResponse:
-    request_card_type: str
-    message: str
-
-    def __init__(self, request_card_type, message) -> None:
-        self.request_card_type = request_card_type
-        self.message = message
-
+def to_obj(klass):
+    module = __import__("reponse".format(klass))
+    class_ = getattr(module, "{}".format(klass))
+    def conv(obj):
+        class_(**obj)
+    return conv
