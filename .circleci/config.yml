@@ -9,34 +9,35 @@ jobs:
     steps:
       - checkout
 
-#      - run:
-#         command: |
-#           cd skill-lambda
-#           pipenv install
+      - run:
+         command: |
+           cd skill-lambda
+           python3 -m pip --version
+           pip3 --version
 
       - run:
           name: build skill lambda
           command: |
             cd skill-lambda && npm i -g serverless && npm i && serverless deploy
 
-  build_interaction_model_lambda:
-    docker:
-      - image: nikolaik/python-nodejs
-
-    working_directory: ~/repo
-
-    steps:
-      - checkout
-
+#  build_interaction_model_lambda:
+#    docker:
+#      - image: nikolaik/python-nodejs
+#
+#    working_directory: ~/repo
+#
+#    steps:
+#      - checkout
+#
+##      - run:
+##          command: |
+##            cd interaction-model
+##            pipenv install
+#
 #      - run:
+#          name: build interaction model lambda
 #          command: |
-#            cd interaction-model
-#            pipenv install
-
-      - run:
-          name: build interaction model lambda
-          command: |
-            cd interaction-model && npm i -g serverless && npm i && serverless deploy
+#            cd interaction-model && npm i -g serverless && npm i && serverless deploy
 
 workflows:
   version: 2

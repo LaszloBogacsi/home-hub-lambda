@@ -17,7 +17,7 @@ class MqttClient:
             client.connect(host=host, port=port)
             client.loop_start()
         except Exception as e:
-            print("connection to mqtt client on " + host + " has failed, reason: " + e)
+            print("connection to mqtt client on " + host + " has failed, reason: " + str(e))
 
     def on_connect(self, client, userdata, flags, rc):
         if rc == 0:
