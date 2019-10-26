@@ -45,5 +45,5 @@ workflows:
     jobs:
       - build_skill_lambda:
           context: home-hub-deploy
-      - build_interaction_model_lambda:
-          context: home-hub-deploy
+#      - build_interaction_model_lambda:
+#          context: home-hub-deploy
