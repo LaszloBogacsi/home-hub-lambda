@@ -1,4 +1,5 @@
 import decimal
+import importlib
 import json
 import logging
 from datetime import datetime
@@ -29,7 +30,7 @@ class RebuildIntentHandler(AbstractRequestHandler):
         }
         lambda_response = lambda_client.invoke(**params)
 
-        interaction_model_response: InteractionModelResponse = json.loads(lambda_response['Payload'].read().decode(), object_hook=to_obj("InteractionModelResponse"))
+        interaction_model_response: InteractionModelResponse = json.loads(lambda_response['Payload'].read().decode(), object_hook=to_response("InteractionModelResponse"))
         if interaction_model_response.request_card_type != "None":
             logger.info("invoking lambda ...")
 
@@ -47,9 +48,10 @@ def default_conv(o):
     return o.__dict__
 
 
-def to_obj(klass):
-    module = __import__("reponse".format(klass))
+def to_response(klass):
+    module = importlib.import_module("reponse")
     class_ = getattr(module, "{}".format(klass))
+
     def conv(obj):
         class_(**obj)
     return conv
