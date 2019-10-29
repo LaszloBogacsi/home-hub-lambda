@@ -11,7 +11,7 @@ jobs:
       - run:
           name: build skill lambda
           command: |
-            cd skill-lambda && npm i -g serverless && npm i && serverless deploy
+            cd skill-lambda && npm i -g serverless && npm i
       - run:
           name: dev deploy skill lambda
           command: serverless deploy --stage dev
@@ -73,10 +73,12 @@ workflows:
       - prod_build_deploy_skill_lambda:
           context: home-hub-deploy
           type: approval
-          requires: dev_build_deploy_skill_lambda
+          requires:
+            - dev_build_deploy_skill_lambda
       - dev_build_interaction_model_lambda:
           context: home-hub-deploy
       - prod_build_interaction_model_lambda:
           context: home-hub-deploy
           type: approval
-          requires: dev_build_interaction_model_lambda
+          requires:
+            - dev_build_interaction_model_lambda
