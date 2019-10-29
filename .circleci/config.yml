@@ -16,7 +16,7 @@ jobs:
           name: dev deploy skill lambda
           command: serverless deploy --stage dev
 
-   prod_build_deploy_skill_lambda:
+  prod_build_deploy_skill_lambda:
     docker:
       - image: nikolaik/python-nodejs:python3.7-nodejs13-alpine
 
