@@ -86,6 +86,5 @@ workflows:
             - dev_build_interaction_model_lambda
       - prod_build_interaction_model_lambda:
           context: home-hub-deploy
-          type: approval
           requires:
             - hold_prod_build_interaction_model_lambda
