@@ -14,7 +14,7 @@ jobs:
             cd skill-lambda && npm i -g serverless && npm i
       - run:
           name: dev deploy skill lambda
-          command: serverless deploy --stage dev
+          command: cd skill-lambda && serverless deploy --stage dev
 
   prod_build_deploy_skill_lambda:
     docker:
@@ -30,7 +30,7 @@ jobs:
             cd skill-lambda && npm i -g serverless && npm i
       - run:
           name: dev deploy skill lambda
-          command: serverless deploy --stage prod
+          command: cd skill-lambda && serverless deploy --stage prod
 
   dev_build_interaction_model_lambda:
     docker:
@@ -46,7 +46,7 @@ jobs:
             cd interaction-model && npm i -g serverless && npm i
       - run:
           name: dev deploy interaction model lambda
-          command: serverless deploy --stage dev
+          command: cd interaction-model && serverless deploy --stage dev
 
   prod_build_interaction_model_lambda:
     docker:
@@ -62,7 +62,7 @@ jobs:
             cd interaction-model && npm i -g serverless && npm i
       - run:
           name: dev deploy interaction model lambda
-          command: serverless deploy --stage prod
+          command: cd interaction-model && serverless deploy --stage prod
 
 workflows:
   version: 2
