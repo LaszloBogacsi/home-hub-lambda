@@ -16,11 +16,11 @@ provider:
         - dynamodb:Query
         - dynamodb:Scan
       Resource:
-        - "arn:aws:dynamodb:us-east-1:982689203849:table/${self:provider.environment.TableName}}"
+        - "arn:aws:dynamodb:us-east-1:982689203849:table/${self:provider.environment.TableName}"
 
   environment:
     TableName:
-      'Fn::ImportValue': 'DynamoDbTableName-${opt:stage, self:provider.stage}}'
+      'Fn::ImportValue': 'DynamoDbTableName-${self:custom.stage}'
 
 
 functions:
@@ -33,3 +33,4 @@ plugins:
 custom:
   pythonRequirements:
     dockerizePip: non-linux
+  stage: ${opt:stage, self:provider.stage}
