@@ -80,10 +80,13 @@ workflows:
             - hold_prod_deploy_skill_lambda
       - dev_build_interaction_model_lambda:
           context: home-hub-deploy
+          requires:
+            - dev_build_deploy_skill_lambda
       - hold_prod_build_interaction_model_lambda:
           type: approval
           requires:
             - dev_build_interaction_model_lambda
+            - prod_build_deploy_skill_lambda
       - prod_build_interaction_model_lambda:
           context: home-hub-deploy
           requires:
