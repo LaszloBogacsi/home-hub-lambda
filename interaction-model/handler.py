@@ -1,4 +1,5 @@
 import json
+import os
 import urllib.request
 import logging
 import boto3
@@ -173,7 +174,7 @@ def lambda_response(card_type="None", message="Rebuild complete"):
 
 def get_all_names_and_locations_from_dynamo():
     dynamodb = boto3.resource("dynamodb", region_name='us-east-1')
-    table_name = 'dev-devices'
+    table_name = os.environ['TableName']
     table = dynamodb.Table(table_name)
 
     pe = "#name, #loc"
