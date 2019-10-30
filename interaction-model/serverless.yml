@@ -20,7 +20,7 @@ provider:
 
   environment:
     TableName:
-      'Fn::ImportValue': 'DynamoDbTableName-${self:custom.stage}'
+      'Fn::ImportValue': DynamoDbTableName-${self:custom.stage}
 
 
 functions:
