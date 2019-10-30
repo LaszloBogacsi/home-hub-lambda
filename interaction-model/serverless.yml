@@ -24,7 +24,7 @@ provider:
         !Sub "DynamoDbTableName-${self:custom.stage}"
 
 
-functions:e
+functions:
   lambda:
     handler: handler.handle
 
