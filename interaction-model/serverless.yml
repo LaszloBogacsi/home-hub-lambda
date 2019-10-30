@@ -10,18 +10,17 @@ provider:
   iamManagedPolicies:
     - "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 
+  environment:
+    TableName: ${self:custom.tableName}
+
   iamRoleStatements:
     - Effect: "Allow"
       Action:
         - dynamodb:Query
         - dynamodb:Scan
       Resource:
-        - "arn:aws:dynamodb:us-east-1:982689203849:table/${self:provider.environment.TableName}"
+        - "arn:aws:dynamodb:us-east-1:982689203849:table/*"
 
-  environment:
-    TableName:
-      Fn::ImportValue:
-        !Sub "DynamoDbTableName-${self:custom.stage}"
 
 
 functions:
@@ -35,3 +34,6 @@ custom:
   pythonRequirements:
     dockerizePip: non-linux
   stage: ${opt:stage, self:provider.stage}
+  tableName:
+    Fn::ImportValue:
+      !Sub "DynamoDbTableName-${self:custom.stage}"
