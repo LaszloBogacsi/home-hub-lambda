@@ -19,8 +19,7 @@ provider:
         - "arn:aws:dynamodb:us-east-1:982689203849:table/${self:provider.environment.TableName}"
 
   environment:
-    TableName:
-      'Fn::ImportValue': 'DynamoDbTableName-dev'
+    TableName: dev-devices
 
 
 functions:
