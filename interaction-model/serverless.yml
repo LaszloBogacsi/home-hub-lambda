@@ -20,10 +20,11 @@ provider:
 
   environment:
     TableName:
-      Fn::ImportValue: !Sub DynamoDbTableName-${self:custom.stage}
+      Fn::ImportValue:
+        !Sub "DynamoDbTableName-${self:custom.stage}"
 
 
-functions:
+functions:e
   lambda:
     handler: handler.handle
 

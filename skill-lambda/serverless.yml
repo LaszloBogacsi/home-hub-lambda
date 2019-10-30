@@ -69,4 +69,4 @@ plugins:
 custom:
   pythonRequirements:
     dockerizePip: non-linux
-  tableName: ${opt:stage, self:provider.stage}-devices
+  tableName: "${opt:stage, self:provider.stage}-devices"
