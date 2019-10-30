@@ -10,7 +10,7 @@ logger.setLevel(logging.DEBUG)
 def handle(event, context):
     try:
         logger.debug(event)
-        skill_id = "amzn1.ask.skill.fa5e222d-7762-4db6-8161-4be6648262c4"
+        skill_id = event['context']['system']['application']['application_id']
         stage = "development"
         locale = "en-GB"
         skill_invocation_name = "home hub"

@@ -1,3 +1,4 @@
+import os
 import random
 import time
 
@@ -11,28 +12,32 @@ from mqtt.MqttClient import MqttClient
 
 
 class DeviceOnOffIntentHandler(AbstractRequestHandler):
+    INTENT_NAME = 'deviceOnOff'
+    TOPIC = "remote/switch/relay"
 
     def __init__(self, mqtt_client: MqttClient) -> None:
         super().__init__()
         self.mqtt_client = mqtt_client
 
     def can_handle(self, handler_input):
-        return is_intent_name('deviceOnOff')(handler_input)
+        return is_intent_name(self.INTENT_NAME)(handler_input)
 
     def handle(self, handler_input):
         device_info = extract_event_params(handler_input)
 
         devices_to_notify = flatten(get_devices_by_name(device_info.name))
+        if len(devices_to_notify) == 0:
+            message = 'No device found'
+            return handler_input.response_builder.speak(message).response
+
         payloads = payload_builder(device_info, devices_to_notify)
         print(payloads)
         for payload in payloads:
             print(payload)
-            self.mqtt_client.publish(topic="remote/switch/relay", payload=payload)
+            self.mqtt_client.publish(topic=self.TOPIC, payload=payload)
             time.sleep(0.5)
         self.mqtt_client.on_all_finished()
-        if len(devices_to_notify) == 0:
-            message = 'No device found'
-            return handler_input.response_builder.speak(message).response
+
 
         return handler_input.response_builder.speak(get_positive_answer()).response
 
@@ -86,13 +91,17 @@ def flatten(devices: []):
 
 def get_from_dynamo(name: str):
     dynamodb = boto3.resource("dynamodb", region_name='us-east-1')
-    table_name = 'dev-devices'
+    table_name = os.environ.get('tableName', None)
+    all_responses = []
+
+    if table_name is None:
+        return all_responses
+
     table = dynamodb.Table(table_name)
 
     fe = Or(Attr('name').eq(name), Attr("location").eq(name))
     pe = "#g_id, #d_id, #name, #is_group, #delay, #loc"
     ean = {"#g_id": "group_id", "#d_id": "device_id", "#name": "name", "#is_group": "is_group", "#delay": 'delay', "#loc": "location"}
-    all_responses = []
 
     response = table.scan(
         FilterExpression=fe,

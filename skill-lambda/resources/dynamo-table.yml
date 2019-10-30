@@ -15,3 +15,8 @@ Resources:
           KeyType: RANGE
       # Set the capacity to auto-scale
       BillingMode: PAY_PER_REQUEST
+Outputs:
+  DynamoTableName:
+    Value: ${self:custom.tableName}
+    Export:
+      Name: DynamoDbTableName-${opt:stage, self:provider.stage}
