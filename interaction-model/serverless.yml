@@ -19,7 +19,8 @@ provider:
         - "arn:aws:dynamodb:us-east-1:982689203849:table/${self:provider.environment.TableName}"
 
   environment:
-    TableName: dev-devices
+    TableName:
+      Fn::ImportValue: !Sub DynamoDbTableName-${self:custom.stage}
 
 
 functions:
